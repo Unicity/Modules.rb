@@ -27,10 +27,15 @@ module Unicity
       
       def initialize(blackboard = {}, settings = {})
         super(blackboard, settings)
+        if @settings.has_key?("status")
+          @settings["status"] = Unicity::BT::TaskStatus.valueOf(@settings["status"])
+        else
+          @settings["status"] = Unicity::BT::TaskStatus::SUCCESS
+        end
       end
       
       def process(exchange)
-        return Unicity::BT::TaskStatus::SUCCESS
+        return @settings["status"]
       end
       
     end

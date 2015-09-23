@@ -31,7 +31,7 @@ module Unicity
       end
 
       def process(exchange)
-        shuffle = @settings[:shuffle]
+        shuffle = @settings["shuffle"]
         if shuffle
           @tasks = @tasks.shuffle
         end

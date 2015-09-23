@@ -34,7 +34,7 @@ module Unicity
       end
       
       def run(exchange, id = "BEHAVE")
-        task = Unicity::BT::TaskStub.new()
+        task = Unicity::BT::TaskStub.new({}, {"status" => "success"})
 
         if task.is_a? Unicity::BT::Task
           status = Unicity::BT::TaskHandler.process(task, exchange)
