@@ -61,8 +61,9 @@ module Unicity
 						if @settings["success"]
 							status = Unicity::BT::TaskStatus::FAILED
 						end
+					else
+						return status
 				end
-				return status
 			end
 
 		end

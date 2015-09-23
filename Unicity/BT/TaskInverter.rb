@@ -24,43 +24,15 @@ module Unicity
 
 	module BT
 
-		class TaskSucceeder < Unicity::BT::TaskDecorator
-
-			def initialize(blackboard = {}, settings = {})
-				super(blackboard, settings)
-				if !@settings.has_key?("failed")
-					@settings["failed"] = true
-				end
-				if !@settings.has_key?("error")
-					@settings["error"] = false
-				end
-				if !@settings.has_key?("inactive")
-					@settings["inactive"] = false
-				end
-				if !@settings.has_key?("active")
-					@settings["active"] = false
-				end
-			end
+		class TaskInverter < Unicity::BT::TaskDecorator
 
 			def process(exchange)
 				status = Unicity::BT::TaskHandler.process(task, exchange)
 				case status
 					when Unicity::BT::TaskStatus::FAILED
-						if @settings["failed"]
-							status = Unicity::BT::TaskStatus::SUCCESS
-						end
-					when Unicity::BT::TaskStatus::ERROR
-						if @settings["error"]
-							status = Unicity::BT::TaskStatus::SUCCESS
-						end
-					when Unicity::BT::TaskStatus::INACTIVE
-						if @settings["inactive"]
-							status = Unicity::BT::TaskStatus::SUCCESS
-						end
-					when Unicity::BT::TaskStatus::ACTIVE
-						if @settings["active"]
-							status = Unicity::BT::TaskStatus::SUCCESS
-						end
+						return Unicity::BT::TaskStatus::SUCCESS
+					when Unicity::BT::TaskStatus::SUCCESS
+						return Unicity::BT::TaskStatus::FAILED
 					else
 						return status
 				end
