@@ -24,25 +24,14 @@ module Unicity
   
   module BT
     
-    class TaskCounter < Unicity::BT::TaskDecorator
-      
-      def initialize(blackboard = {}, settings = {})
-        super(blackboard, settings)
-        @counter = 0
-      end
+    class TaskResetter < Unicity::BT::TaskDecorator
       
       def process(exchange)
-        if @counter < @settings[:max_count]
-          @counter += 1;
-          return Unicity::BT::TaskStatus::ACTIVE         
+        status = Unicity::BT::TaskHandler.process(task, exchange)
+        if status == Unicity::BT::TaskStatus::SUCCESS
+          task.reset()
         end
-        @counter = 0
-        status = Unicity::BT::TaskHandler.process(@task, exchange)
         return status
-      end
-      
-      def reset()
-        @counter = 0
       end
       
     end

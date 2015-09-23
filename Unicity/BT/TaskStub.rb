@@ -25,7 +25,7 @@ module Unicity
     
     class TaskStub < Unicity::BT::TaskLeaf
       
-      def initialize(blackboard = nil, settings = nil)
+      def initialize(blackboard = {}, settings = {})
         super(blackboard, settings)
       end
       

@@ -17,6 +17,8 @@
 ##
 
 require "./TaskBranch.rb"
+require "./TaskHandler.rb"
+require "./TaskStatus.rb"
 
 module Unicity
   
@@ -24,12 +26,12 @@ module Unicity
     
     class TaskSelector < Unicity::BT::TaskBranch
     
-      def initialize(blackboard = nil, settings = nil)
+      def initialize(blackboard = {}, settings = {})
         super(blackboard, settings)
       end
 
       def process(exchange)
-        shuffle = false
+        shuffle = @settings[:shuffle]
         if shuffle
           @tasks = @tasks.shuffle
         end

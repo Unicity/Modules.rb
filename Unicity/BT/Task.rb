@@ -27,7 +27,7 @@ module Unicity
       attr_accessor :blackboard
       attr_accessor :settings
       
-      def initialize(blackboard = nil, settings = nil)
+      def initialize(blackboard = {}, settings = {})
         @blackboard = blackboard
         @settings = settings
       end
