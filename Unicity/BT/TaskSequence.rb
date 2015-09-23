@@ -37,7 +37,7 @@ module Unicity
         @tasks.each do |task|
           status = Unicity::BT::TaskHandler.process(task, exchange)
           if status == Unicity::BT::TaskStatus::INACTIVE
-            inactive += 1
+            inactives += 1
           elsif status != Unicity::BT::TaskStatus::SUCCESS
             return status
           end
