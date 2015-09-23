@@ -47,7 +47,6 @@ module Unicity
         else
           return Unicity::BT::TaskStatus::INACTIVE
         end
-        return
       end
       
     end

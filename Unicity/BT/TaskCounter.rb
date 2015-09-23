@@ -33,7 +33,7 @@ module Unicity
       
       def process(exchange)
         if @counter < @settings[:max_count]
-          @counter += 1;
+          @counter += 1
           return Unicity::BT::TaskStatus::ACTIVE         
         end
         @counter = 0
