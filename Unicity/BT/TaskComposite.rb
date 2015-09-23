@@ -19,40 +19,40 @@
 require "./Task.rb"
 
 module Unicity
-  
-  module BT
-    
-    class TaskComposite < Unicity::BT::Task
-      
-      def initialize(blackboard = {}, settings = {})
-        super(blackboard, settings)
-        @tasks = []
-      end
-      
-      def addTask(task)
-        @tasks << task
-      end
-      
-      def addTasks(tasks)
-        tasks.each do |task|
-          @tasks << task
-        end
-      end
-      
-      def getTasks()
-        return @tasks
-      end
-      
-      def removeTask(task)
-        @tasks.delete(task)
-      end
-      
-      def removeTasks()
-        @tasks = []
-      end
-      
-    end
 
-  end
-  
+	module BT
+
+		class TaskComposite < Unicity::BT::Task
+
+			def initialize(blackboard = {}, settings = {})
+				super(blackboard, settings)
+				@tasks = []
+			end
+
+			def addTask(task)
+				@tasks << task
+			end
+
+			def addTasks(tasks)
+				tasks.each do |task|
+					@tasks << task
+				end
+			end
+
+			def getTasks()
+				return @tasks
+			end
+
+			def removeTask(task)
+				@tasks.delete(task)
+			end
+
+			def removeTasks()
+				@tasks.clear()
+			end
+
+		end
+
+	end
+
 end

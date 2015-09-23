@@ -21,21 +21,21 @@ require "./TaskHandler.rb"
 require "./TaskStatus.rb"
 
 module Unicity
-  
-  module BT
-    
-    class TaskResetter < Unicity::BT::TaskDecorator
-      
-      def process(exchange)
-        status = Unicity::BT::TaskHandler.process(task, exchange)
-        if status == Unicity::BT::TaskStatus::SUCCESS
-          task.reset()
-        end
-        return status
-      end
-      
-    end
 
-  end
-  
+	module BT
+
+		class TaskResetter < Unicity::BT::TaskDecorator
+
+			def process(exchange)
+				status = Unicity::BT::TaskHandler.process(task, exchange)
+				if status == Unicity::BT::TaskStatus::SUCCESS
+					task.reset()
+				end
+				return status
+			end
+
+		end
+
+	end
+
 end

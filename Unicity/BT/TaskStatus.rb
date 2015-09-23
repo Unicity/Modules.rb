@@ -17,40 +17,40 @@
 ##
 
 module Unicity
-  
-  module BT
-    
-    module TaskStatus
-      
-      QUIT = -3
-      FAILED = -2
-      ERROR = -1
-      INACTIVE = 0
-      ACTIVE = 1
-      SUCCESS = 2
-      
-      def self.valueOf(value)
-        if value.is_a? String
-          value.upcase!
-          if value == "QUIT"
-            return QUIT
-          elsif value == "FAILED"
-            return FAILED
-          elsif value == "INACTIVE"
-            return INACTIVE
-          elsif value == "ACTIVE"
-            return ACTIVE
-          elsif value == "SUCCESS"
-            return SUCCESS
-          else
-            return ERROR
-          end
-        end
-        return value
-      end
-      
-    end
-    
-  end
-  
+
+	module BT
+
+		module TaskStatus
+
+			QUIT = -3
+			FAILED = -2
+			ERROR = -1
+			INACTIVE = 0
+			ACTIVE = 1
+			SUCCESS = 2
+
+			def self.valueOf(value)
+				if value.is_a? String
+					value.upcase!
+					if value == "QUIT"
+						return QUIT
+					elsif value == "FAILED"
+						return FAILED
+					elsif value == "INACTIVE"
+						return INACTIVE
+					elsif value == "ACTIVE"
+						return ACTIVE
+					elsif value == "SUCCESS"
+						return SUCCESS
+					else
+						return ERROR
+					end
+				end
+				return value
+			end
+
+		end
+
+	end
+
 end

@@ -20,20 +20,20 @@ require "./Message.rb"
 
 module Unicity
 
-  module BT
+	module BT
 
-    class Exchange
+		class Exchange
 
-      attr_accessor :in
-      attr_accessor :out
+			attr_accessor :in
+			attr_accessor :out
 
-      def initialize()
-        @in = Unicity::BT::Message.new()
-        @out = Unicity::BT::Message.new()
-      end
-    
-    end
+			def initialize()
+				@in = Unicity::BT::Message.new()
+				@out = Unicity::BT::Message.new()
+			end
 
-  end
-  
+		end
+
+	end
+
 end

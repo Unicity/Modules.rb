@@ -19,13 +19,13 @@
 require "./TaskLeaf.rb"
 
 module Unicity
-  
-  module BT
-    
-    class TaskCondition < Unicity::BT::TaskLeaf
-      
-    end
 
-  end
-  
+	module BT
+
+		class TaskCondition < Unicity::BT::TaskLeaf
+
+		end
+
+	end
+
 end

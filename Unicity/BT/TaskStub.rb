@@ -20,26 +20,26 @@ require "./TaskLeaf.rb"
 require "./TaskStatus.rb"
 
 module Unicity
-  
-  module BT
-    
-    class TaskStub < Unicity::BT::TaskLeaf
-      
-      def initialize(blackboard = {}, settings = {})
-        super(blackboard, settings)
-        if @settings.has_key?("status")
-          @settings["status"] = Unicity::BT::TaskStatus.valueOf(@settings["status"])
-        else
-          @settings["status"] = Unicity::BT::TaskStatus::SUCCESS
-        end
-      end
-      
-      def process(exchange)
-        return @settings["status"]
-      end
-      
-    end
 
-  end
-  
+	module BT
+
+		class TaskStub < Unicity::BT::TaskLeaf
+
+			def initialize(blackboard = {}, settings = {})
+				super(blackboard, settings)
+				if @settings.has_key?("status")
+					@settings["status"] = Unicity::BT::TaskStatus.valueOf(@settings["status"])
+				else
+					@settings["status"] = Unicity::BT::TaskStatus::SUCCESS
+				end
+			end
+
+			def process(exchange)
+				return @settings["status"]
+			end
+
+		end
+
+	end
+
 end

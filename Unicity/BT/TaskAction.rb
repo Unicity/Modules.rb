@@ -19,13 +19,13 @@
 require "./TaskLeaf.rb"
 
 module Unicity
-  
-  module BT
-    
-    class TaskAction < Unicity::BT::TaskLeaf
-      
-    end
 
-  end
-  
+	module BT
+
+		class TaskAction < Unicity::BT::TaskLeaf
+
+		end
+
+	end
+
 end

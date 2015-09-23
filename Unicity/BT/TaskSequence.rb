@@ -19,38 +19,38 @@
 require "./TaskBranch.rb"
 
 module Unicity
-  
-  module BT
-    
-    class TaskSequence < Unicity::BT::TaskBranch
-    
-      def initialize(blackboard = {}, settings = {})
-        super(blackboard, settings)
-      end
 
-      def process(exchange)
-        shuffle = @settings["shuffle"]
-        if shuffle
-          @tasks = @tasks.shuffle
-        end
-        inactives = 0;
-        @tasks.each do |task|
-          status = Unicity::BT::TaskHandler.process(task, exchange)
-          if status == Unicity::BT::TaskStatus::INACTIVE
-            inactives += 1
-          elsif status != Unicity::BT::TaskStatus::SUCCESS
-            return status
-          end
-        end
-        if inactives < @tasks.count
-          return Unicity::BT::TaskStatus::SUCCESS
-        else
-          return Unicity::BT::TaskStatus::INACTIVE
-        end
-      end
-      
-    end
+	module BT
 
-  end
-  
+		class TaskSequence < Unicity::BT::TaskBranch
+
+			def initialize(blackboard = {}, settings = {})
+				super(blackboard, settings)
+			end
+
+			def process(exchange)
+				shuffle = @settings["shuffle"]
+				if shuffle
+					@tasks = @tasks.shuffle
+				end
+				inactives = 0;
+				@tasks.each do |task|
+					status = Unicity::BT::TaskHandler.process(task, exchange)
+					if status == Unicity::BT::TaskStatus::INACTIVE
+						inactives += 1
+					elsif status != Unicity::BT::TaskStatus::SUCCESS
+						return status
+					end
+				end
+				if inactives < @tasks.count
+					return Unicity::BT::TaskStatus::SUCCESS
+				else
+					return Unicity::BT::TaskStatus::INACTIVE
+				end
+			end
+
+		end
+
+	end
+
 end

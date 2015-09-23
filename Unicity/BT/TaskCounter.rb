@@ -21,32 +21,35 @@ require "./TaskHandler.rb"
 require "./TaskStatus.rb"
 
 module Unicity
-  
-  module BT
-    
-    class TaskCounter < Unicity::BT::TaskDecorator
-      
-      def initialize(blackboard = {}, settings = {})
-        super(blackboard, settings)
-        @counter = 0
-      end
-      
-      def process(exchange)
-        if @counter < @settings[:max_count]
-          @counter += 1
-          return Unicity::BT::TaskStatus::ACTIVE         
-        end
-        @counter = 0
-        status = Unicity::BT::TaskHandler.process(@task, exchange)
-        return status
-      end
-      
-      def reset()
-        @counter = 0
-      end
-      
-    end
 
-  end
-  
+	module BT
+
+		class TaskCounter < Unicity::BT::TaskDecorator
+
+			def initialize(blackboard = {}, settings = {})
+				super(blackboard, settings)
+				if !@settings.has_key?("max_count")
+					@settings["max_count"] = 10
+				end
+				@counter = 0
+			end
+
+			def process(exchange)
+				if @counter < @settings["max_count"]
+					@counter += 1
+					return Unicity::BT::TaskStatus::ACTIVE
+				end
+				@counter = 0
+				status = Unicity::BT::TaskHandler.process(@task, exchange)
+				return status
+			end
+
+			def reset()
+				@counter = 0
+			end
+
+		end
+
+	end
+
 end
