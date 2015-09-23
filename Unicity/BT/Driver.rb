@@ -22,6 +22,7 @@ require "./Task.rb"
 require "./TaskHandler.rb"
 require "./TaskStatus.rb"
 require "./TaskStub.rb"
+require "./TaskFailer.rb"
 
 module Unicity
 
@@ -34,7 +35,10 @@ module Unicity
 			end
 
 			def run(exchange, id = "BEHAVE")
-				task = Unicity::BT::TaskStub.new({}, {"status" => "success"})
+				stub = Unicity::BT::TaskStub.new({}, {"status" => "inactive"})
+
+				task = Unicity::BT::TaskFailer.new({}, {"inactive" => false})
+				task.addTask(stub)
 
 				if task.is_a? Unicity::BT::Task
 					status = Unicity::BT::TaskHandler.process(task, exchange)
