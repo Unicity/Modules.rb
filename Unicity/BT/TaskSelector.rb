@@ -28,6 +28,9 @@ module Unicity
 
 			def initialize(blackboard = {}, settings = {})
 				super(blackboard, settings)
+				if !@settings.has_key?("shuffle")
+					@settings["shuffle"] = false
+				end
 			end
 
 			def process(exchange)
