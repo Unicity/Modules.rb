@@ -16,7 +16,7 @@
 # limitations under the License.
 ##
 
-require "./Task.rb"
+require "./task.rb"
 
 module Unicity
 

@@ -16,13 +16,21 @@
 # limitations under the License.
 ##
 
-require "./TaskLeaf.rb"
+require "./message.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskAction < Unicity::BT::TaskLeaf
+		class Exchange
+
+			attr_accessor :in
+			attr_accessor :out
+
+			def initialize()
+				@in = Unicity::BT::Message.new()
+				@out = Unicity::BT::Message.new()
+			end
 
 		end
 

@@ -16,39 +16,35 @@
 # limitations under the License.
 ##
 
-require "./Task.rb"
+require "./task_decorator.rb"
+require "./task_handler.rb"
+require "./task_status.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskComposite < Unicity::BT::Task
+		class TaskLimiter < Unicity::BT::TaskDecorator
 
 			def initialize(blackboard = {}, settings = {})
 				super(blackboard, settings)
-				@tasks = []
-			end
-
-			def addTask(task)
-				@tasks << task
-			end
-
-			def addTasks(tasks)
-				tasks.each do |task|
-					@tasks << task
+				if !@settings.has_key?("limit")
+					@settings["limit"] = 1
 				end
+				@calls = 0
 			end
 
-			def getTasks()
-				return @tasks
+			def process(exchange)
+				if @calls < @settings["limit"]
+					status = Unicity::BT::TaskHandler.process(@task, exchange)
+					@calls += 1
+					return status
+				end
+				return Unicity::BT::TaskStatus::FAILED
 			end
 
-			def removeTask(task)
-				@tasks.delete(task)
-			end
-
-			def removeTasks()
-				@tasks.clear()
+			def reset()
+				@calls = 0
 			end
 
 		end

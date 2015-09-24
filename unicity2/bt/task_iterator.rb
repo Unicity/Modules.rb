@@ -16,9 +16,9 @@
 # limitations under the License.
 ##
 
-require "./TaskDecorator.rb"
-require "./TaskHandler.rb"
-require "./TaskStatus.rb"
+require "./task_decorator.rb"
+require "./task_handler.rb"
+require "./task_status.rb"
 
 module Unicity
 

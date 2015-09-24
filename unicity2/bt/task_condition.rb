@@ -16,18 +16,13 @@
 # limitations under the License.
 ##
 
-require "./TaskAction.rb"
-require "./TaskStatus.rb"
+require "./task_leaf.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskBreakpoint < Unicity::BT::TaskAction
-
-			def process(exchange)
-				return Unicity::BT::TaskStatus::QUIT
-			end
+		class TaskCondition < Unicity::BT::TaskLeaf
 
 		end
 

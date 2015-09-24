@@ -16,36 +16,39 @@
 # limitations under the License.
 ##
 
-require "./TaskDecorator.rb"
-require "./TaskHandler.rb"
-require "./TaskStatus.rb"
+require "./task_decorator.rb"
+require "./task_handler.rb"
+require "./task_status.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskGambler < Unicity::BT::TaskDecorator
+		class TaskRepeater < Unicity::BT::TaskDecorator
 
 			def initialize(blackboard = {}, settings = {})
 				super(blackboard, settings)
-				#if !@settings.has_key?("callable")
-				#	@settings["callable"] = "rand"
-				#end
-				if !@settings.has_key?("odds")
-					@settings["odds"] = 0.01
-				end
-				if !@settings.has_key?("options")
-					@settings["options"] = 100
+				if @settings.has_key?("until")
+					status = Unicity::BT::TaskStatus.valueOf(@settings["until"])
+					if status != Unicity::BT::TaskStatus::SUCCESS
+						status = Unicity::BT::TaskStatus::FAILED
+					end
+					@settings["until"] = status
+				else
+					@settings["until"] = Unicity::BT::TaskStatus::SUCCESS
 				end
 			end
 
 			def process(exchange)
-				callable = Random.new(1234)
-				probability = @settings["odds"] * @settings["options"]
-				if callable.rand <= probability
-					return Unicity::BT::TaskHandler.process(task, exchange)
+				until_status = @settings["until"]
+				loop do
+					status = Unicity::BT::TaskHandler.process(task, exchange)
+					if status != Unicity::BT::TaskStatus::SUCCESS && status != Unicity::BT::TaskStatus::FAILED
+						return status
+					end
+					break if status == until_status
 				end
-				return Unicity::BT::TaskStatus::ACTIVE
+				return until_status
 			end
 
 		end

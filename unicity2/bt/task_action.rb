@@ -16,37 +16,13 @@
 # limitations under the License.
 ##
 
-require "./TaskDecorator.rb"
-require "./TaskHandler.rb"
-require "./TaskStatus.rb"
+require "./task_leaf.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskCounter < Unicity::BT::TaskDecorator
-
-			def initialize(blackboard = {}, settings = {})
-				super(blackboard, settings)
-				if !@settings.has_key?("max_count")
-					@settings["max_count"] = 10
-				end
-				@counter = 0
-			end
-
-			def process(exchange)
-				if @counter < @settings["max_count"]
-					@counter += 1
-					return Unicity::BT::TaskStatus::ACTIVE
-				end
-				@counter = 0
-				status = Unicity::BT::TaskHandler.process(@task, exchange)
-				return status
-			end
-
-			def reset()
-				@counter = 0
-			end
+		class TaskAction < Unicity::BT::TaskLeaf
 
 		end
 

@@ -16,22 +16,39 @@
 # limitations under the License.
 ##
 
-require "./TaskDecorator.rb"
-require "./TaskHandler.rb"
-require "./TaskStatus.rb"
+require "./task.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskResetter < Unicity::BT::TaskDecorator
+		class TaskComposite < Unicity::BT::Task
 
-			def process(exchange)
-				status = Unicity::BT::TaskHandler.process(task, exchange)
-				if status == Unicity::BT::TaskStatus::SUCCESS
-					task.reset
+			def initialize(blackboard = {}, settings = {})
+				super(blackboard, settings)
+				@tasks = []
+			end
+
+			def addTask(task)
+				@tasks << task
+			end
+
+			def addTasks(tasks)
+				tasks.each do |task|
+					@tasks << task
 				end
-				return status
+			end
+
+			def getTasks()
+				return @tasks
+			end
+
+			def removeTask(task)
+				@tasks.delete(task)
+			end
+
+			def removeTasks()
+				@tasks.clear()
 			end
 
 		end

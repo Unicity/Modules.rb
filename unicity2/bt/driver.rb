@@ -16,30 +16,35 @@
 # limitations under the License.
 ##
 
-require "./TaskPicker.rb"
-require "./TaskHandler.rb"
-require "./TaskStatus.rb"
+require "./exchange.rb"
+require "./message.rb"
+require "./task.rb"
+require "./task_handler.rb"
+require "./task_status.rb"
+require "./task_stub.rb"
+require "./task_failer.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskRandomPicker < Unicity::BT::TaskPicker
+		class Driver
 
-			def initialize(blackboard = {}, settings = {})
-				super(blackboard, settings)
-				#if !@settings.has_key?("callable")
-				#	@settings["callable"] = "rand"
-				#end
+			def initialize(file)
+				@file = file
 			end
 
-			def process(exchange)
-				count = @tasks.count()
-				if count > 0
-					callable = Random.new(1234)
-					index = callable.rand()
-					return Unicity::BT::TaskHandler.process(@task[index], exchange)
+			def run(exchange, id = "BEHAVE")
+				stub = Unicity::BT::TaskStub.new({}, {"status" => "inactive"})
+
+				task = Unicity::BT::TaskFailer.new({}, {"inactive" => false})
+				task.addTask(stub)
+
+				if task.is_a? Unicity::BT::Task
+					status = Unicity::BT::TaskHandler.process(task, exchange)
+					return status
 				end
+
 				return Unicity::BT::TaskStatus::ERROR
 			end
 
@@ -48,3 +53,7 @@ module Unicity
 	end
 
 end
+
+driver = Unicity::BT::Driver.new("file")
+status = driver.run(Unicity::BT::Exchange.new())
+puts status

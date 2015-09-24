@@ -16,13 +16,34 @@
 # limitations under the License.
 ##
 
-require "./TaskComposite.rb"
+require "./task_composite.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskBranch < Unicity::BT::TaskComposite
+		class TaskDecorator < Unicity::BT::TaskComposite
+
+			def initialize(blackboard = {}, settings = {})
+				super(blackboard, settings)
+				@tasks = [nil]
+			end
+
+			def addTask(task)
+				@tasks[0] = task
+			end
+
+			def getTask()
+				return @tasks[0]
+			end
+
+			def task()
+				return @tasks[0]
+			end
+
+			def setTask(task = nil)
+				@tasks[0] = task
+			end
 
 		end
 

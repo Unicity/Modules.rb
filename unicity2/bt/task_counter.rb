@@ -16,20 +16,36 @@
 # limitations under the License.
 ##
 
-require "./Message.rb"
+require "./task_decorator.rb"
+require "./task_handler.rb"
+require "./task_status.rb"
 
 module Unicity
 
 	module BT
 
-		class Exchange
+		class TaskCounter < Unicity::BT::TaskDecorator
 
-			attr_accessor :in
-			attr_accessor :out
+			def initialize(blackboard = {}, settings = {})
+				super(blackboard, settings)
+				if !@settings.has_key?("max_count")
+					@settings["max_count"] = 10
+				end
+				@counter = 0
+			end
 
-			def initialize()
-				@in = Unicity::BT::Message.new()
-				@out = Unicity::BT::Message.new()
+			def process(exchange)
+				if @counter < @settings["max_count"]
+					@counter += 1
+					return Unicity::BT::TaskStatus::ACTIVE
+				end
+				@counter = 0
+				status = Unicity::BT::TaskHandler.process(@task, exchange)
+				return status
+			end
+
+			def reset()
+				@counter = 0
 			end
 
 		end

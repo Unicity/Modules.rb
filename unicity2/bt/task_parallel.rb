@@ -16,9 +16,9 @@
 # limitations under the License.
 ##
 
-require "./TaskBranch.rb"
-require "./TaskHandler.rb"
-require "./TaskStatus.rb"
+require "./task_branch.rb"
+require "./task_handler.rb"
+require "./task_status.rb"
 
 module Unicity
 

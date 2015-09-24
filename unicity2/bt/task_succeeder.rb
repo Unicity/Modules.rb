@@ -16,18 +16,21 @@
 # limitations under the License.
 ##
 
-require "./TaskDecorator.rb"
-require "./TaskHandler.rb"
-require "./TaskStatus.rb"
+require "./task_decorator.rb"
+require "./task_handler.rb"
+require "./task_status.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskFailer < Unicity::BT::TaskDecorator
+		class TaskSucceeder < Unicity::BT::TaskDecorator
 
 			def initialize(blackboard = {}, settings = {})
 				super(blackboard, settings)
+				if !@settings.has_key?("failed")
+					@settings["failed"] = true
+				end
 				if !@settings.has_key?("error")
 					@settings["error"] = false
 				end
@@ -37,29 +40,26 @@ module Unicity
 				if !@settings.has_key?("active")
 					@settings["active"] = false
 				end
-				if !@settings.has_key?("success")
-					@settings["success"] = true
-				end
 			end
 
 			def process(exchange)
 				status = Unicity::BT::TaskHandler.process(task, exchange)
 				case status
+					when Unicity::BT::TaskStatus::FAILED
+						if @settings["failed"]
+							status = Unicity::BT::TaskStatus::SUCCESS
+						end
 					when Unicity::BT::TaskStatus::ERROR
 						if @settings["error"]
-							status = Unicity::BT::TaskStatus::FAILED
+							status = Unicity::BT::TaskStatus::SUCCESS
 						end
 					when Unicity::BT::TaskStatus::INACTIVE
 						if @settings["inactive"]
-							status = Unicity::BT::TaskStatus::FAILED
+							status = Unicity::BT::TaskStatus::SUCCESS
 						end
 					when Unicity::BT::TaskStatus::ACTIVE
 						if @settings["active"]
-							status = Unicity::BT::TaskStatus::FAILED
-						end
-					when Unicity::BT::TaskStatus::SUCCESS
-						if @settings["success"]
-							status = Unicity::BT::TaskStatus::FAILED
+							status = Unicity::BT::TaskStatus::SUCCESS
 						end
 					else
 						return status

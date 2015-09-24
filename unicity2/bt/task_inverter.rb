@@ -16,33 +16,26 @@
 # limitations under the License.
 ##
 
-require "./TaskComposite.rb"
+require "./task_decorator.rb"
+require "./task_handler.rb"
+require "./task_status.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskDecorator < Unicity::BT::TaskComposite
+		class TaskInverter < Unicity::BT::TaskDecorator
 
-			def initialize(blackboard = {}, settings = {})
-				super(blackboard, settings)
-				@tasks = [nil]
-			end
-
-			def addTask(task)
-				@tasks[0] = task
-			end
-
-			def getTask()
-				return @tasks[0]
-			end
-
-			def task()
-				return @tasks[0]
-			end
-
-			def setTask(task = nil)
-				@tasks[0] = task
+			def process(exchange)
+				status = Unicity::BT::TaskHandler.process(task, exchange)
+				case status
+					when Unicity::BT::TaskStatus::FAILED
+						return Unicity::BT::TaskStatus::SUCCESS
+					when Unicity::BT::TaskStatus::SUCCESS
+						return Unicity::BT::TaskStatus::FAILED
+					else
+						return status
+				end
 			end
 
 		end

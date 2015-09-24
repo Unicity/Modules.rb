@@ -16,34 +16,13 @@
 # limitations under the License.
 ##
 
-require "./TaskSelector.rb"
-require "./TaskHandler.rb"
-require "./TaskStatus.rb"
+require "./task_composite.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskPicker < Unicity::BT::TaskSelector
-
-			def initialize(blackboard = {}, settings = {})
-				super(blackboard, settings)
-				if !@settings.has_key?("index")
-					@settings["index"] = 0
-				end
-			end
-
-			def process(exchange)
-				shuffle = @settings["shuffle"]
-				if shuffle
-					@tasks = @tasks.shuffle
-				end
-				index = @settings["index"]
-				if @tasks[index].nil?
-					return Unicity::BT::TaskStatus::ERROR
-				end
-				return Unicity::BT::TaskHandler.process(task, exchange)
-			end
+		class TaskBranch < Unicity::BT::TaskComposite
 
 		end
 

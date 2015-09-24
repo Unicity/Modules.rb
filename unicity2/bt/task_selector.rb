@@ -16,36 +16,42 @@
 # limitations under the License.
 ##
 
-require "./Exchange.rb"
-require "./Message.rb"
-require "./Task.rb"
-require "./TaskHandler.rb"
-require "./TaskStatus.rb"
-require "./TaskStub.rb"
-require "./TaskFailer.rb"
+require "./task_branch.rb"
+require "./task_handler.rb"
+require "./task_status.rb"
 
 module Unicity
 
 	module BT
 
-		class Driver
+		class TaskSelector < Unicity::BT::TaskBranch
 
-			def initialize(file)
-				@file = file
+			def initialize(blackboard = {}, settings = {})
+				super(blackboard, settings)
+				if !@settings.has_key?("shuffle")
+					@settings["shuffle"] = false
+				end
 			end
 
-			def run(exchange, id = "BEHAVE")
-				stub = Unicity::BT::TaskStub.new({}, {"status" => "inactive"})
-
-				task = Unicity::BT::TaskFailer.new({}, {"inactive" => false})
-				task.addTask(stub)
-
-				if task.is_a? Unicity::BT::Task
-					status = Unicity::BT::TaskHandler.process(task, exchange)
-					return status
+			def process(exchange)
+				shuffle = @settings["shuffle"]
+				if shuffle
+					@tasks = @tasks.shuffle
 				end
-
-				return Unicity::BT::TaskStatus::ERROR
+				inactives = 0;
+				@tasks.each do |task|
+					status = Unicity::BT::TaskHandler.process(task, exchange)
+					if status == Unicity::BT::TaskStatus::INACTIVE
+						inactives += 1
+					elsif status != Unicity::BT::TaskStatus::FAILED
+						return status
+					end
+				end
+				if inactives < @tasks.count
+					return Unicity::BT::TaskStatus::FAILED
+				else
+					return Unicity::BT::TaskStatus::INACTIVE
+				end
 			end
 
 		end
@@ -53,7 +59,3 @@ module Unicity
 	end
 
 end
-
-driver = Unicity::BT::Driver.new("file")
-status = driver.run(Unicity::BT::Exchange.new())
-puts status

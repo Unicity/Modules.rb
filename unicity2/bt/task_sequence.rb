@@ -16,26 +16,42 @@
 # limitations under the License.
 ##
 
-require "./TaskLeaf.rb"
-require "./TaskStatus.rb"
+require "./task_branch.rb"
+require "./task_handler.rb"
+require "./task_status.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskStub < Unicity::BT::TaskLeaf
+		class TaskSequence < Unicity::BT::TaskBranch
 
 			def initialize(blackboard = {}, settings = {})
 				super(blackboard, settings)
-				if @settings.has_key?("status")
-					@settings["status"] = Unicity::BT::TaskStatus.valueOf(@settings["status"])
-				else
-					@settings["status"] = Unicity::BT::TaskStatus::SUCCESS
+				if !@settings.has_key?("shuffle")
+					@settings["shuffle"] = false
 				end
 			end
 
 			def process(exchange)
-				return @settings["status"]
+				shuffle = @settings["shuffle"]
+				if shuffle
+					@tasks = @tasks.shuffle
+				end
+				inactives = 0;
+				@tasks.each do |task|
+					status = Unicity::BT::TaskHandler.process(task, exchange)
+					if status == Unicity::BT::TaskStatus::INACTIVE
+						inactives += 1
+					elsif status != Unicity::BT::TaskStatus::SUCCESS
+						return status
+					end
+				end
+				if inactives < @tasks.count
+					return Unicity::BT::TaskStatus::SUCCESS
+				else
+					return Unicity::BT::TaskStatus::INACTIVE
+				end
 			end
 
 		end

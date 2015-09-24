@@ -16,42 +16,36 @@
 # limitations under the License.
 ##
 
-require "./TaskBranch.rb"
-require "./TaskHandler.rb"
-require "./TaskStatus.rb"
+require "./task_decorator.rb"
+require "./task_handler.rb"
+require "./task_status.rb"
 
 module Unicity
 
 	module BT
 
-		class TaskSelector < Unicity::BT::TaskBranch
+		class TaskGambler < Unicity::BT::TaskDecorator
 
 			def initialize(blackboard = {}, settings = {})
 				super(blackboard, settings)
-				if !@settings.has_key?("shuffle")
-					@settings["shuffle"] = false
+				#if !@settings.has_key?("callable")
+				#	@settings["callable"] = "rand"
+				#end
+				if !@settings.has_key?("odds")
+					@settings["odds"] = 0.01
+				end
+				if !@settings.has_key?("options")
+					@settings["options"] = 100
 				end
 			end
 
 			def process(exchange)
-				shuffle = @settings["shuffle"]
-				if shuffle
-					@tasks = @tasks.shuffle
+				callable = Random.new(1234)
+				probability = @settings["odds"] * @settings["options"]
+				if callable.rand <= probability
+					return Unicity::BT::TaskHandler.process(task, exchange)
 				end
-				inactives = 0;
-				@tasks.each do |task|
-					status = Unicity::BT::TaskHandler.process(task, exchange)
-					if status == Unicity::BT::TaskStatus::INACTIVE
-						inactives += 1
-					elsif status != Unicity::BT::TaskStatus::FAILED
-						return status
-					end
-				end
-				if inactives < @tasks.count
-					return Unicity::BT::TaskStatus::FAILED
-				else
-					return Unicity::BT::TaskStatus::INACTIVE
-				end
+				return Unicity::BT::TaskStatus::ACTIVE
 			end
 
 		end
