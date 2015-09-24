@@ -16,7 +16,7 @@
 # limitations under the License.
 ##
 
-require "./TaskDecorator.rb"
+require "./TaskPicker.rb"
 require "./TaskHandler.rb"
 require "./TaskStatus.rb"
 
@@ -24,14 +24,23 @@ module Unicity
 
 	module BT
 
-		class TaskResetter < Unicity::BT::TaskDecorator
+		class TaskRandomPicker < Unicity::BT::TaskPicker
+
+			def initialize(blackboard = {}, settings = {})
+				super(blackboard, settings)
+				#if !@settings.has_key?("callable")
+				#	@settings["callable"] = "rand"
+				#end
+			end
 
 			def process(exchange)
-				status = Unicity::BT::TaskHandler.process(task, exchange)
-				if status == Unicity::BT::TaskStatus::SUCCESS
-					task.reset
+				count = @tasks.count()
+				if count > 0
+					callable = Random.new(1234)
+					index = callable.rand()
+					return Unicity::BT::TaskHandler.process(@task[index], exchange)
 				end
-				return status
+				return Unicity::BT::TaskStatus::ERROR
 			end
 
 		end

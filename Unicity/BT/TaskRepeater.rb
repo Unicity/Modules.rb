@@ -24,14 +24,31 @@ module Unicity
 
 	module BT
 
-		class TaskResetter < Unicity::BT::TaskDecorator
+		class TaskRepeater < Unicity::BT::TaskDecorator
+
+			def initialize(blackboard = {}, settings = {})
+				super(blackboard, settings)
+				if @settings.has_key?("until")
+					status = Unicity::BT::TaskStatus.valueOf(@settings["until"])
+					if status != Unicity::BT::TaskStatus::SUCCESS
+						status = Unicity::BT::TaskStatus::FAILED
+					end
+					@settings["until"] = status
+				else
+					@settings["until"] = Unicity::BT::TaskStatus::SUCCESS
+				end
+			end
 
 			def process(exchange)
-				status = Unicity::BT::TaskHandler.process(task, exchange)
-				if status == Unicity::BT::TaskStatus::SUCCESS
-					task.reset
+				until_status = @settings["until"]
+				loop do
+					status = Unicity::BT::TaskHandler.process(task, exchange)
+					if status != Unicity::BT::TaskStatus::SUCCESS && status != Unicity::BT::TaskStatus::FAILED
+						return status
+					end
+					break if status == until_status
 				end
-				return status
+				return until_status
 			end
 
 		end
