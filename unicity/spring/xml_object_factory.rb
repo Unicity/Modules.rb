@@ -60,8 +60,8 @@ module Unicity
 				return @resources
 			end
 
-			def hasObject(id)
-				return @parser.hasObject(id)
+			def hasObject?(id)
+				return @parser.hasObject?(id)
 			end
 
 		end
@@ -72,5 +72,12 @@ end
 
 simple_xml_element = XML::Parser.file("input.spring.xml").parse
 xml_object_factory = Unicity::Spring::XMLObjectFactory.new(simple_xml_element)
+
 #puts xml_object_factory.getObjectIds().inspect
-puts xml_object_factory.getObjectScope("lookup").inspect
+#puts xml_object_factory.getObjectScope("lookup").inspect
+#puts xml_object_factory.getParser.isPrimitiveType?("integer").inspect
+#puts xml_object_factory.getParser.getElementPrefixedName(simple_xml_element.root).inspect
+#children = xml_object_factory.getParser.getElementChildren(simple_xml_element.root)
+#children.select do |child|
+#	puts xml_object_factory.getParser.getElementName(child).inspect
+#end
