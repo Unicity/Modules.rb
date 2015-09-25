@@ -20,7 +20,7 @@ module Unicity
 
 	module Spring
 
-		class XMLRegistry
+		class XMLObjectRegistry
 
 			def initialize()
 				@register = {}

@@ -18,13 +18,13 @@
 
 require("xml")
 require("./xml_object_definition.rb")
-require("./xml_registry.rb")
+require("./xml_object_registry.rb")
 
 module Unicity
 
 	module Spring
 
-		class XMLParser
+		class XMLObjectParser
 
 			@@encodings = [
 				"NONE", "UTF_8", "UTF_16LE", "UTF_16BE", "UCS_4LE",
@@ -48,7 +48,7 @@ module Unicity
 			def initialize(context)
 				@context = context # XMLObjectFactory
 				@idrefs = {}
-				@registry = Unicity::Spring::XMLRegistry.new()
+				@registry = Unicity::Spring::XMLObjectRegistry.new()
 				@singletons = {}
 			end
 

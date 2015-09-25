@@ -16,7 +16,7 @@
 # limitations under the License.
 ##
 
-require "./xml_parser.rb"
+require "./xml_object_parser.rb"
 
 module Unicity
 
@@ -29,7 +29,7 @@ module Unicity
 				if !resource.nil?()
 					@resources << resource
 				end
-				@parser = Unicity::Spring::XMLParser.new(self)
+				@parser = Unicity::Spring::XMLObjectParser.new(self)
 			end
 
 			def addResource(resource)
