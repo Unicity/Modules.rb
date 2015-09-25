@@ -27,7 +27,7 @@ module Unicity
 			def getObject(parser, element)
 				if element["type"].nil?
 					name = parser.getElementPrefixedName(element)
-					raise Exception.new("Unable to process Spring XML. Tag \"#{name}\" is missing \"type\" attribute")
+					raise Exception.new("Unable to process Spring XML. Tag \"#{name}\" is missing \"type\" attribute.")
 				end
 				type = element["type"]
 
