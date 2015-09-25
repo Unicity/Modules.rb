@@ -17,6 +17,8 @@
 ##
 
 require("xml")
+require("./xml_object_definition.rb")
+require("./xml_registry.rb")
 
 module Unicity
 
@@ -46,7 +48,7 @@ module Unicity
 			def initialize(context)
 				@context = context # XMLObjectFactory
 				@idrefs = {}
-				@registry = nil
+				@registry = Unicity::Spring::XMLRegistry.new()
 				@singletons = {}
 			end
 
@@ -65,7 +67,7 @@ module Unicity
 
 			def getElementChildren(element, namespace = "")
 				children = element.children
-				if namespace.is_a?(String) && namespace.length > 0
+				if namespace.is_a?(String)
 					children = children.select do |child|
 						child.element? && self.getElementNamespace(child) == namespace
 					end
@@ -95,6 +97,70 @@ module Unicity
 					return @@encodings[encoding] # http://xml4r.github.io/libxml-ruby/rdoc/index.html
 				end
 				return "UTF-8"
+			end
+
+			def getObjectDefinition(id)
+				elements = self.find(id)
+				if !elements.empty?
+					return Unicity::Spring::XMLObjectDefinition.new(elements.first)
+				end
+				return nil
+			end
+
+			def getObjectFromElement(element)
+				key = [self.getElementName(element), self.getElementNamespace(element)]
+				if !@registry.has_key?(key)
+					raise Exception.new("Unable to parse Spring XML. Element has not been registered.")
+				end
+				return @registry.getValue(key).getObject(self, element)
+			end
+
+			def getObjectFromIdRef(idref, idrefs = nil)
+				if !idrefs.nil?
+					@idrefs = idrefs
+				end
+				if !self.isId?(idref)
+					raise Exception.new("Unable to process Spring XML. Expected a valid \"id\" token, but got \"#{idref}\".")
+				end
+				# TODO uncomment session code
+				# session_key = __CLASS__ . '::' . @context . '::' . idref;
+				# object = @session[session_key]
+				object = nil
+				if !object.nil?
+					return object
+				elsif @singletons.has_key?(idref)
+					return @singletons[idref]
+				end
+				elements = self.find(idref)
+				if !elements.empty?
+					if @idrefs.has_key?(idref) # checks for circular references
+						raise Exception.new("Unable to process Spring XML. Discovered a circular reference on id \"#{idref}\".")
+					end
+					@idrefs[idref] = @idrefs.count # stack level
+					element = elements.first
+					object = self.getObjectFromElement(element)
+					@idrefs.delete(idref)
+					if !element["scope"].nil?
+						scope = element["scope"]
+						case scope
+							# TODO uncomment session code
+							#when 'session':
+							#	@session[session_key] = object
+							#	return object
+							when "singleton"
+								@singletons[idref] = object
+								return object
+							when "prototype"
+								return object
+							else
+								raise Exception.new("Unable to process Spring XML. Expected a valid \"scope\" token, but got \"#{scope}\".")
+						end
+					else
+						@singletons[idref] = object
+						return object
+					end
+				end
+				return nil
 			end
 
 			def getObjectIds(type = nil)
