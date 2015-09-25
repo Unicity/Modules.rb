@@ -30,7 +30,7 @@ module Unicity
 			SUCCESS = 2
 
 			def self.valueOf(value)
-				if value.is_a? String
+				if value.is_a?(String)
 					value.upcase!
 					if value == "QUIT"
 						return QUIT

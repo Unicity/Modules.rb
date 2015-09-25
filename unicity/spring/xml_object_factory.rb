@@ -16,50 +16,61 @@
 # limitations under the License.
 ##
 
+require "./xml_parser.rb"
+
 module Unicity
 
-	class XMLObjectFactory
+	module Spring
 
-		def initialize(resource = nil)
-			@resources = []
-			if !resource.nil?()
+		class XMLObjectFactory
+
+			def initialize(resource = nil)
+				@resources = []
+				if !resource.nil?()
+					@resources << resource
+				end
+				@parser = Unicity::Spring::XMLParser.new(self)
+			end
+
+			def addResource(resource)
 				@resources << resource
 			end
-			@parser = Unicity::Spring::XMLParser.new(self)
-		end
 
-		def addResource(resource)
-			@resources << resource
-		end
+			def getObject(id)
+				return @parser.getObjectFromIdRef(id, {})
+			end
 
-		def getObject(id)
-			return @parser.getObjectFromIdRef(id, {})
-		end
+			def getObjectIds(type = nil)
+				return @parser.getObjectIds(type)
+			end
 
-		def getObjectIds(type = nil)
-			return @parser.getObjectIds(type)
-		end
+			def getObjectScope(id)
+				return @parser.getObjectScope(id)
+			end
 
-		def getObjectScope(id)
-			return @parser.getObjectScope(id)
-		end
+			def getObjectType(id)
+				return @parser.getObjectType(id)
+			end
 
-		def getObjectType(id)
-			return @parser.getObjectType(id)
-		end
+			def getParser()
+				return @parser
+			end
 
-		def getParser()
-			return @parser
-		end
+			def getResources()
+				return @resources
+			end
 
-		def getResources()
-			return @resources
-		end
+			def hasObject(id)
+				return @parser.hasObject(id)
+			end
 
-		def hasObject(id)
-			return @parser.hasObject(id)
 		end
 
 	end
 
 end
+
+simple_xml_element = XML::Parser.file("input.spring.xml").parse
+xml_object_factory = Unicity::Spring::XMLObjectFactory.new(simple_xml_element)
+#puts xml_object_factory.getObjectIds().inspect
+puts xml_object_factory.getObjectScope("lookup").inspect

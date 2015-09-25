@@ -25,25 +25,79 @@ module Unicity
 		class XMLParser
 
 			def initialize(context)
-				@context = context
+				@context = context # XMLObjectFactory
 				@idrefs = {}
 				@singletons = {}
 			end
 
+			def find(idref)
+				if !self.isId(idref)
+					raise ArgumentError.new("Invalid argument detected #{idref}")
+				end
+				resource = self.getResource()
+				xpath = "/spring:objects/*[@id='#{idref}' or contains(@name,'#{idref}')]"
+				elements = resource.find(xpath, "spring:http://static.unicity.com/modules/xsd/spring.xsd")
+				elements = elements.select do |element|
+					(!element["id"].nil? && element["id"] == idref) || (!element["name"].nil? && element["name"].split(/(,|;|\s)+/).include?(idref))
+				end
+				return elements
+			end
+
 			def getObjectIds(type = nil)
-				document = @context.parse
+				resource = self.getResource()
 				xpath = !type.nil? ? "/spring:objects/*[@type='#{type}']/@id" : "/spring:objects/*/@id"
-				elements = document.find(xpath, "spring:http://static.unicity.com/modules/xsd/spring.xsd")
+				attributes = resource.find(xpath, "spring:http://static.unicity.com/modules/xsd/spring.xsd")
 				ids = []
-				elements.each do |element|
-					ids << element.value
+				attributes.each do |attribute|
+					ids << attribute.value
 				end
 				return ids
 			end
 
+			def getObjectScope(id)
+				elements = self.find(id)
+				if !elements.empty?
+					element = elements.first
+					if !element["scope"].nil?
+						scope = element["scope"]
+						if !self.isScopeType(scope)
+							raise Exception.new("Unable to process Spring XML. Expected a valid \"scope\" token, but got \"#{scope}\".")
+						end
+						return scope
+					end
+					return "singleton"
+				end
+				return nil
+			end
+
+
 			def getResource()
 				resources = @context.getResources()
 				return resources[0]
+			end
+
+			def isId(token)
+				return token.is_a?(String) && token.match(/^[a-z0-9_]+$/i)
+			end
+
+			def isKey(token)
+				return token.is_a?(String) && token.length > 0
+			end
+
+			def isMethodName(token)
+				return token.is_a?(String) && token.match(/^[a-z_][a-z0-9_]*$/i)
+			end
+
+			def isPropertyName(token)
+				return token.is_a?(String) && token.match(/^[a-z_][a-z0-9_]*$/i)
+			end
+
+			def isScopeType(token)
+				return token.is_a?(String) && token.match(/^(singleton|prototype|session)$/)
+			end
+
+			def isSpacePreserved(token)
+				return token.is_a?(String) && token.match(/^preserve$/)
 			end
 
 		end
@@ -51,7 +105,3 @@ module Unicity
 	end
 
 end
-
-#parser = XML::Parser.file("input.spring.xml")
-#xml = Unicity::Spring::XMLParser.new(parser)
-#puts xml.getObjectIds().inspect
