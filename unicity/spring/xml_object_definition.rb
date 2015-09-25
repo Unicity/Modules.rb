@@ -50,11 +50,11 @@ module Unicity
 				return !@element['type'].nil? ? @element['type'].gsub(".", "::") : ""
 			end
 
-			def isPrototype()
+			def isPrototype?()
 				return self.getScope == "prototype"
 			end
 
-			def isSingleton()
+			def isSingleton?()
 				return self.getScope == "singleton"
 			end
 
